@@ -1,3 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
-# Create your views here.
+
+def index(request):
+    user = request.user
+    if user.is_authenticated:
+        return redirect(dashboard)
+    else:
+        return render(request, 'index.html')
