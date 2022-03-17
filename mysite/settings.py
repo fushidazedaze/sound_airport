@@ -12,6 +12,11 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 from pathlib import Path
 
+# For Auth0 & PostgreSQL
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -40,6 +45,10 @@ INSTALLED_APPS = [
     'accounts',
     'mix',
     'sns',
+
+    # For Auth0
+    'social_django',
+    'mysite',
 ]
 
 MIDDLEWARE = [
@@ -78,8 +87,12 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': os.environ['DB_NAME'],  # Stringに変換する必要ある？
+        'USER': os.environ['DB_USER'],
+        'PASSWORD': os.environ['DB_PASS'],
+        'HOST': os.environ['DB_HOST'],
+        'PORT': 5432,
     }
 }
 
@@ -124,3 +137,24 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Auth0
+
+SOCIAL_AUTH_TRAILING_SLASH = False  # Remove trailing slash from routes
+SOCIAL_AUTH_AUTH0_DOMAIN = os.environ['AUTH_DOMAIN']
+SOCIAL_AUTH_AUTH0_KEY = os.environ['AUTH_KEY']
+SOCIAL_AUTH_AUTH0_SECRET = os.environ['AUTH_SECRET']
+
+SOCIAL_AUTH_AUTH0_SCOPE = [
+    'openid',
+    'profile',
+    'email'
+]
+
+AUTHENTICATION_BACKENDS = {
+    'sns.auth0backend.Auth0',  # snsフォルダは同列にないが、このままでいいか？
+    'django.contrib.auth.backends.ModelBackend'
+}
+
+LOGIN_URL = '/login/auth0'
+LOGIN_REDIRECT_URL = '/dashboard'
