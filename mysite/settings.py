@@ -49,6 +49,9 @@ INSTALLED_APPS = [
     # For Auth0
     'social_django',
     'mysite',
+
+    # For Storage
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -152,9 +155,11 @@ SOCIAL_AUTH_AUTH0_SCOPE = [
 ]
 
 AUTHENTICATION_BACKENDS = {
-    'sns.auth0backend.Auth0',  # snsフォルダは同列にないが、このままでいいか？
+    'sns.auth0backend.Auth0',  # snsフォルダは同列にないが、これでいいか？
     'django.contrib.auth.backends.ModelBackend'
 }
 
 LOGIN_URL = '/login/auth0'
 LOGIN_REDIRECT_URL = '/dashboard'
+
+AUTH_USER_MODEL = 'sns.User'    # snsフォルダは同列にないが、これでいいか？
